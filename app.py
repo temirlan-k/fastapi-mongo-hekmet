@@ -19,7 +19,6 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/", tags=["Root"])
 async def read_root():
-    print("Root5461 ")
     return {"message": "Welcome to this fantastic app."}
 
 app.include_router(UserRouter,tags=["Users"],prefix="/user",)
