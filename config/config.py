@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
@@ -16,6 +17,9 @@ class Settings(BaseSettings):
 
 async def initiate_database():
     settings = Settings()
+    print(settings.DATABASE_URL)
+
+    print(os.getenv("DATABASE_URL"))
     client = AsyncIOMotorClient(settings.DATABASE_URL)
     await init_beanie(
         database=client.get_default_database(), document_models=models.__all__
