@@ -1,4 +1,4 @@
-version: "3"
+version: '3.8'
 
 services:
   web:
@@ -6,15 +6,18 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - .env.docker-compose
-
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - mongodb
+      
   mongodb:
     image: bitnami/mongodb:latest
     ports:
-      - "27017"
+      - "27017:27017"
     volumes:
       - data:/bitnami/mongodb
-
 
 volumes:
   data:

@@ -2,23 +2,29 @@ from fastapi import FastAPI, Depends
 
 from auth.jwt_bearer import JWTBearer
 from config.config import initiate_database
-from routes.admin import router as AdminRouter
-from routes.student import router as StudentRouter
-
-app = FastAPI()
+from routes.user import router as UserRouter    
+from contextlib import asynccontextmanager
+import motor.motor_asyncio
 
 token_listener = JWTBearer()
 
 
-@app.on_event("startup")
-async def start_database():
+@asynccontextmanager
+async def lifespan(app:FastAPI):
     await initiate_database()
+    yield
+
+app = FastAPI(lifespan=lifespan) 
 
 
 @app.get("/", tags=["Root"])
 async def read_root():
+    print("Root5461 ")
     return {"message": "Welcome to this fantastic app."}
 
+app.include_router(UserRouter,tags=["Users"],prefix="/user",)
 
-app.include_router(AdminRouter, tags=["Administrator"], prefix="/admin")
-app.include_router(StudentRouter,tags=["Students"],prefix="/student",dependencies=[Depends(token_listener)],)
+import uvicorn
+
+if __name__ == "__main__":
+    uvicorn.run("app:app", host="0.0.0.0", port=8080, reload=True)
